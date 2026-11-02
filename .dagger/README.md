@@ -226,7 +226,26 @@ generation, schema execution and the real Node container smoke above. That
 workaround is **not part of this module** or a deployment requirement on normal
 Docker hosts. `call services-smoke` started all three database service processes
 but timed out after 150 seconds because the custom engine could not resolve
-service hostnames (`server misbehaving`). Database queries/full integration
-parity therefore remain unverified on this host. No heavy monorepo suites or
-application dependency installation were run. No performance conclusions are
-claimed from these smoke checks.
+service hostnames (`server misbehaving`).
+
+Further checks found an explicit sandbox firewall restriction, not a missing
+database DNS entry. During a live retry, the CNI hosts file contained all three
+service names. The sandbox redirected DNS requests to its own proxy instead of
+Dagger's resolver. Its firewall log recorded `DNS BLOCKED`,
+`because: NotInAllowList` for the generated `*.dagger.local` names. Direct local
+connection probes also recorded `PACKET BLOCKED`, `because: IPNotAllowed` for
+`10.87.0.1`. A narrower NAT rule did not correct the failure; that diagnostic
+change was restored.
+
+The sandbox operator needs to approve access to Dagger's local service network
+(`10.87.0.0/16` in this engine) and preserve local resolution of
+`*.dagger.local` through Dagger's resolver (`10.87.0.1`). A domain allowlist
+entry alone is insufficient if the sandbox still sends those private names
+to an external resolver. Do not disable or bypass the sandbox firewall.
+After the operator changes the supported sandbox configuration, run
+`call services-smoke` before integration tests. Kernel networking compatibility
+and sandbox firewall policy are separate constraints.
+
+Database queries/full integration parity therefore remain unverified on this
+host. No heavy monorepo suites or application dependency installation were
+run. No performance conclusions are claimed from these smoke checks.
