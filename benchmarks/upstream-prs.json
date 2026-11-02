@@ -1,0 +1,79 @@
+{
+  "repository": "nebuk89/twenty",
+  "baseline": "fbaaaae4aab28db62a23ae17c5dc279d2c810cce",
+  "selectionDate": "2026-11-02",
+  "purpose": "GitHub Actions and Dagger CI performance comparisons",
+  "examples": [
+    {
+      "pullRequest": "https://github.com/nebuk89/twenty/pull/1",
+      "sourcePullRequest": "https://github.com/twentyhq/twenty/pull/29176",
+      "sourceHead": "38d368233cc3c35f9baa93f8e0b1590a8b279c57",
+      "head": "08ebed710e0c3b270d2aab4a1fad43f336f6a24f",
+      "branch": "benchmark/upstream-29176",
+      "name": "Shared date parsing",
+      "files": 2,
+      "additions": 20,
+      "deletions": 7,
+      "packages": ["twenty-shared"],
+      "patchId": "ea0b0b6d8e1755e0a808318a75b5f3017594b9ba"
+    },
+    {
+      "pullRequest": "https://github.com/nebuk89/twenty/pull/2",
+      "sourcePullRequest": "https://github.com/twentyhq/twenty/pull/29177",
+      "sourceHead": "701ed08fbcb194208f7112da6f029e974596b937",
+      "head": "9928f81e33890d08640303f7a0dcd6087eb69f04",
+      "branch": "benchmark/upstream-29177",
+      "name": "Safari dropdown scrolling",
+      "files": 2,
+      "additions": 61,
+      "deletions": 2,
+      "packages": ["twenty-front"],
+      "patchId": "d0e6a5179c43b7a639493c79c61c6aae02f82359"
+    },
+    {
+      "pullRequest": "https://github.com/nebuk89/twenty/pull/3",
+      "sourcePullRequest": "https://github.com/twentyhq/twenty/pull/29349",
+      "sourceHead": "e0e3efb8347c847134b606bac669b3a1b97aeab6",
+      "head": "5602e66bc13c6363da606b88594b7c1564f983a6",
+      "branch": "benchmark/upstream-29349",
+      "name": "SDK selector stability",
+      "files": 4,
+      "additions": 277,
+      "deletions": 5,
+      "packages": ["twenty-sdk"],
+      "patchId": "cfe542c91c8e9c3e1d30cf7da43ddc2391395a0e"
+    },
+    {
+      "pullRequest": "https://github.com/nebuk89/twenty/pull/4",
+      "sourcePullRequest": "https://github.com/twentyhq/twenty/pull/29395",
+      "sourceHead": "b5acb280abe32a51fb87399e00171706efc433d1",
+      "head": "01bd4b1f6e9c854e55abbe9fe7636870fc573646",
+      "branch": "benchmark/upstream-29395",
+      "name": "Outlook sent drafts",
+      "files": 7,
+      "additions": 375,
+      "deletions": 14,
+      "packages": ["twenty-server"],
+      "patchId": "5a96bf165ef527e5af58a99170a2ad6e873ec741"
+    },
+    {
+      "pullRequest": "https://github.com/nebuk89/twenty/pull/5",
+      "sourcePullRequest": "https://github.com/twentyhq/twenty/pull/28508",
+      "sourceHead": "9e8ab8ec00ff8690522546766e20e26dc0fa9115",
+      "head": "a9f4870ff88581ae7d35a3dae491a9aa7ac09cf4",
+      "branch": "benchmark/upstream-28508",
+      "name": "Select option descriptions",
+      "files": 31,
+      "additions": 520,
+      "deletions": 148,
+      "packages": [
+        "twenty-agent-skills",
+        "twenty-docs",
+        "twenty-front",
+        "twenty-server",
+        "twenty-shared"
+      ],
+      "patchId": "84fb07b1e551caee99ea89932648807cecca0b28"
+    }
+  ]
+}
