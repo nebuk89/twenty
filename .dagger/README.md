@@ -8,6 +8,11 @@ containers use Node **26.5.1** and the repository's Yarn **4.18.1** release.
 Image tags, unlike digests, can be republished: record resolved images when
 publishing performance comparisons.
 
+Node uses system CA certificates in addition to its built-in roots. For networks
+with a TLS proxy, install the operator's CA through Dagger's
+[custom CA configuration](https://docs.dagger.io/reference/configuration/custom-ca).
+Certificate checks remain enabled.
+
 ## Run
 
 ```sh
@@ -228,7 +233,48 @@ Docker hosts. `call services-smoke` started all three database service processes
 but timed out after 150 seconds because the custom engine could not resolve
 service hostnames (`server misbehaving`).
 
-Further checks found an explicit sandbox firewall restriction, not a missing
+On 2026-11-02, a new Docker 29.1.3 sandbox reproduced the default-engine
+failure. The pinned v0.21.11 CLI passed its published SHA-256 checksum.
+Both iptables backends rejected the `comment` match, and native nftables rejected
+the `inet` family. An isolated engine then started with a local compatibility
+shim that removes only `-m comment --comment ...` metadata. The shim retains
+traffic matches, targets and policies, including Dagger's standard CNI firewall
+plugin and NAT rules. `call smoke` passed with Node v26.5.1. This is a local
+diagnostic workaround, not a supported Dagger configuration.
+
+On that engine, `call services-smoke` timed out after 180 seconds. All three
+service names appeared in dnsmasq's hosts file, but lookups through `10.87.0.1`
+returned `no such host`. A later trace enabled query logs on the same dnsmasq
+configuration. The resolver loaded all three service names, but received zero
+queries during a 65-second service check. A resolver reload did not help.
+These results narrow the failure to the DNS path before dnsmasq, not missing
+service registrations. The sandbox's eBPF log shows DNS redirection, but no
+explicit deny event for these attempts. The current policy uses block-list
+mode, unlike the earlier allowlist environment. No sandbox firewall controls
+changed.
+
+The first frozen PR #1 workload attempt failed during dependency installation
+with `self-signed certificate in certificate chain`. A separate Node HTTPS
+probe passed after enabling `NODE_USE_SYSTEM_CA=1`, which lets Node use the
+proxy CA certificates that Dagger installs. The module now sets that option
+without disabling certificate checks. The failed workload took 34.48 seconds;
+it is a failure record, not a successful benchmark.
+
+The next attempt passed TLS checks and downloaded 4,065 packages, but dependency
+linking failed with `ENOSPC` after 310.62 seconds. Yarn's global cache default
+overrode `YARN_CACHE_FOLDER`, so packages went into the container's filesystem
+instead of the mounted download cache. The module now sets
+`YARN_ENABLE_GLOBAL_CACHE=false` to use `/yarn-cache`. This sandbox has a
+28 GiB filesystem; it is not an unlimited-storage runner.
+
+A retry with the corrected mounted cache and concurrency 1 also failed with
+`ENOSPC` during dependency linking after 386.53 seconds. The cache placement fix
+does not solve the filesystem capacity limit. Yarn reports `/yarn-cache` as its
+effective cache directory with the new settings. No application checks ran.
+The frozen PR #1 checkout remains clean at
+`08ebed710e0c3b270d2aab4a1fad43f336f6a24f`.
+
+Earlier checks on the previous host found an explicit sandbox firewall restriction, not a missing
 database DNS entry. During a live retry, the CNI hosts file contained all three
 service names. The sandbox redirected DNS requests to its own proxy instead of
 Dagger's resolver. Its firewall log recorded `DNS BLOCKED`,
@@ -246,6 +292,7 @@ After the operator changes the supported sandbox configuration, run
 `call services-smoke` before integration tests. Kernel networking compatibility
 and sandbox firewall policy are separate constraints.
 
-Database queries/full integration parity therefore remain unverified on this
-host. No heavy monorepo suites or application dependency installation were
-run. No performance conclusions are claimed from these smoke checks.
+Database queries/full integration parity remain unverified on this host.
+Application dependency installation was attempted, but no application checks
+completed successfully. No performance conclusions are claimed from these
+failed attempts or smoke checks.

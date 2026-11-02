@@ -29,12 +29,14 @@ export class TwentyCi {
       .from(NODE_IMAGE)
       .withWorkdir('/workspace')
       .withEnvVariable('CI', 'true')
+      .withEnvVariable('NODE_USE_SYSTEM_CA', '1')
       .withEnvVariable('NX_DAEMON', 'false')
       .withEnvVariable('NX_NO_CLOUD', 'true')
       .withEnvVariable('NX_SKIP_NX_CACHE', 'true')
       .withEnvVariable('NX_TASKS_RUNNER_DYNAMIC_OUTPUT', 'false')
       .withEnvVariable('YARN_ENABLE_HARDENED_MODE', 'true')
       .withEnvVariable('YARN_ENABLE_SCRIPTS', 'false')
+      .withEnvVariable('YARN_ENABLE_GLOBAL_CACHE', 'false')
       .withEnvVariable('YARN_CACHE_FOLDER', '/yarn-cache')
       .withMountedCache(
         '/yarn-cache',
