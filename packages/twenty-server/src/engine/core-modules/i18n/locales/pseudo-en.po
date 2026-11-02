@@ -8876,6 +8876,7 @@ msgstr ""
 
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
 msgstr ""
 
@@ -11105,6 +11106,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
+msgstr ""
+
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
 msgstr ""
 
 #. js-lingui-id: Gl4xP9

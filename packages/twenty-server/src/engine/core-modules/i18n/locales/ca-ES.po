@@ -8881,6 +8881,7 @@ msgstr "Nom"
 
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
 msgstr "Aquest nom no està disponible \"{name}\"."
 
@@ -11111,6 +11112,11 @@ msgstr "No s'ha trobat el camí de registre relacionat."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
 msgstr "No s'ha trobat l'objecte del camí de registre relacionat"
+
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr ""
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
