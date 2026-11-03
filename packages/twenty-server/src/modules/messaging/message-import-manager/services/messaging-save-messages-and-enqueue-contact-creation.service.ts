@@ -51,12 +51,14 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     connectedAccount,
     workspaceId,
     personHandleField,
+    messageExternalIdsToRefresh = [],
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
     personHandleField?: PersonHandleField;
+    messageExternalIdsToRefresh?: string[];
   }): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
@@ -73,14 +75,23 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           return this.workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
               const {
+                sentDraftMessageExternalIds,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageChannelMessageAssociationIdMap,
                 messageExternalIdToMessageThreadIdMap,
-              } = await this.messageService.saveMessagesWithinTransaction(
-                messagesToSave,
-                messageChannel.id,
+              } = await this.messageService.saveMessagesWithinTransaction({
+                messages: messagesToSave,
+                messageChannelId: messageChannel.id,
+                messageExternalIdsToRefresh,
                 transactionScope,
                 workspaceId,
+              });
+
+              const refreshedMessageExternalIds = new Set(
+                messageExternalIdsToRefresh,
+              );
+              const sentDraftMessageExternalIdsSet = new Set(
+                sentDraftMessageExternalIds,
               );
 
               const participantsWithMessageId: (ParticipantWithMessageId & {
@@ -89,6 +100,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 const messageId = messageExternalIdsAndIdsMap.get(
                   message.externalId,
                 );
+
+                const isRefreshWithoutSend =
+                  refreshedMessageExternalIds.has(message.externalId) &&
+                  !sentDraftMessageExternalIdsSet.has(message.externalId);
 
                 return messageId
                   ? message.participants.map((participant: Participant) => {
@@ -116,6 +131,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                       // Drafts are outgoing, so recipients of an unsent email don't become contacts
                       const shouldCreateContact =
                         !message.isDraft &&
+                        !isRefreshWithoutSend &&
                         !!participant.handle &&
                         !isParticipantConnectedAccount &&
                         !isExcludedByNonProfessionalEmails &&
